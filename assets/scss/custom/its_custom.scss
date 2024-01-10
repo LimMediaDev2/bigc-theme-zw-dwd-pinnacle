@@ -1,0 +1,17 @@
+.form-input--incrementTotal {
+    width: auto;
+    max-width: 100px;
+}
+
+
+.cart-item-title {
+    @include breakpoint('small') {
+        width: 33%;
+    }
+}
+
+.cart-item-info {
+    @include breakpoint('small') {
+        width: auto;
+    }
+}
