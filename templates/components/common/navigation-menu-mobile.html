@@ -1,33 +1,31 @@
-<nav class="navPages mobile">
-  <div class="account-link currency-converter">
-    <ul class="navPages-list navPages-list--user">
-        {{#if currency_selector.currencies.length '>' 1}}
-            <li class="navPages-item">
-                <a class="navPages-action has-subMenu" href="#" data-collapsible="navPages-currency" aria-controls="navPages-currency" aria-expanded="false">
-                    {{lang 'common.currency' code=currency_selector.active_currency_code}} <i class="icon navPages-action-moreIcon" aria-hidden="true"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-chevron-down"></use></svg></i>
-                </a>
-                <div class="navPage-subMenu" id="navPages-currency" aria-hidden="true" tabindex="-1">
-                    <ul class="navPnavPagesage-subMenu-list">
-                        {{#each currency_selector.currencies}}
-                        <li class="navPage-subMenu-item">
-                            <a class="navPage-subMenu-action navPages-action" href="{{{switch_url}}}">
-                                {{#if is_active}}
-                                    <strong>{{name}}</strong>
-                                {{else}}
-                                    {{name}}
-                                {{/if}}
-                            </a>
-                        </li>
-                        {{/each}}
-                    </ul>
-                </div>
-            </li>
-        {{/if}}
-    </ul>
-  </div>
+<nav class="navPages mobile">   
     <ul class="navPages-list">
         <div class="nav-align{{#if theme_settings.mainNav-align '!==' 'left'}} center{{/if}}">
         <div class="custom-pages-nav">
+            <div id="mobile-menu">
+                <div class="category-menu">
+                    <h2 class="container-header mobile">Shop By Category</h2>
+                    {{#each categories}}
+                      <li class="navPages-item mobile">
+                        {{> components/common/navigation-list}}
+                      </li>
+                    {{/each}}
+                </div>
+                {{#if theme_settings.brands_visibility_mobile_menu '===' true}}
+                    <div class="brand-menu">
+                      <h2 class="container-header mobile">Shop By Brand</h2>
+                      {{#each shop_by_brand}}
+                        <li class="navPages-item mobile">
+                          <a class="navPages-action" href="{{url}}">{{name}}</a>
+                        </li>
+                      {{/each}}
+                          <li class="navPages-item mobile">
+                            <a class="navPages-action" href="/brands/">View all Brands</a>
+                          </li>
+                        <div class="clear"></div>
+                    </div>
+                {{/if}}
+          </div>            
           <div id="desktop-menu">
             <h2 class="container-header mobile">Main Menu</h2>
             {{#each pages}}
@@ -35,35 +33,39 @@
                     {{> components/common/navigation-list}}
                 </li>
             {{/each}}
-          </div>
-            <div id="mobile-menu">
-              <div class="category-menu">
-                <h2 class="container-header mobile">Shop By Category</h2>
-                {{#each categories}}
-                  <li class="navPages-item mobile">
-                    {{> components/common/navigation-list}}
-                  </li>
-                {{/each}}
-              </div>
-
-          {{#if theme_settings.brands_visibility_mobile_menu '===' true}}
-            <div class="brand-menu">
-              <h2 class="container-header mobile">Shop By Brand</h2>
-              {{#each shop_by_brand}}
-                <li class="navPages-item mobile">
-                  <a class="navPages-action" href="{{url}}">{{name}}</a>
-                </li>
-              {{/each}}
-                  <li class="navPages-item mobile">
-                    <a class="navPages-action" href="/brands/">View all Brands</a>
-                  </li>
-            <div class="clear"></div>
-          </div>
-        {{/if}}
-
+                <div class="account-link currency-converter">
+                    <ul class="navPages-list navPages-list--user">
+                        {{#if currency_selector.currencies.length '>' 1}}
+                            <li class="navPages-item">
+                                <a class="navPages-action has-subMenu" href="#" data-collapsible="navPages-currency" aria-controls="navPages-currency" aria-expanded="false">
+                                    {{lang 'common.currency' code=currency_selector.active_currency_code}} <i class="icon navPages-action-moreIcon" aria-hidden="true"><svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-chevron-down"></use></svg></i>
+                                </a>
+                                <div class="navPage-subMenu" id="navPages-currency" aria-hidden="true" tabindex="-1">
+                                    <ul class="navPnavPagesage-subMenu-list">
+                                        {{#each currency_selector.currencies}}
+                                        <li class="navPage-subMenu-item">
+                                            <a class="navPage-subMenu-action navPages-action" href="{{{switch_url}}}">
+                                                {{#if is_active}}
+                                                    <strong>{{name}}</strong>
+                                                {{else}}
+                                                    {{name}}
+                                                {{/if}}
+                                            </a>
+                                        </li>
+                                        {{/each}}
+                                    </ul>
+                                </div>
+                            </li>
+                        {{/if}}
+                    </ul>
+                </div>  
+              <div class="social-media mobile">
+                  {{> components/common/social-links}}
+              </div>                           
           </div>
         </div>
     </ul>
+   
     <ul class="navPages-list navPages-list--user">
         {{#if currency_selector.currencies.length '>' 1}}
             <li class="navPages-item">
@@ -105,7 +107,9 @@
         {{#if customer}}
             <li class="navPages-item account">
                 <a class="navPages-action has-subMenu" href="{{urls.account.index}}" data-collapsible="navPages-account">
-                    {{lang 'common.account'}} <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                    {{lang 'common.account'}} <i aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 358 512" style="enable-background:new 0 0 358 512;" xml:space="preserve">
+<path d="M180.8,393c-1.6,1.6-4.1,1.6-5.6,0L6,223.8c-1.5-1.5-1.6-4-0.1-5.5l22.7-22.7c1-1,2.1-1.2,2.9-1.2c0.7,0,1.8,0.2,2.7,1.1  l144,143.7l143.8-143.8c1-1,2.1-1.2,2.9-1.2c0.7,0,1.8,0.2,2.7,1.1l22.8,22.7c1.5,1.5,1.6,4,0.1,5.5L180.8,393z"/>
+</svg></i>
                 </a>
                 <div class="navPage-subMenu" id="navPages-account" aria-hidden="true" tabindex="-1">
                     <ul class="navPage-subMenu-list">

@@ -371,7 +371,7 @@ p {
   fill: stencilColor("color-secondary");
 }
 
-.form-checklist-item:hover, .form-checklist-item--selected {
+.form-checklist-item:hover{
   background-color: stencilColor("optimizedCheckout-step-backgroundColor");
 }
 
@@ -743,5 +743,10 @@ and (orientation : landscape) {
   }
   #body.checkout .main-nav-container.fixed.fixed-ready .navPages-quickSearch.right.searchbar.sticky{
     top: -3px;
+  }
+}
+.creditCardTypes-list {
+  .icon svg {
+    fill: none;
   }
 }

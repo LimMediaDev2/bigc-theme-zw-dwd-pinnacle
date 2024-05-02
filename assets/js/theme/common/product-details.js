@@ -10,8 +10,6 @@ import { normalizeFormData } from './utils/api';
 import { isBrowserIE, convertIntoArray } from './utils/ie-helpers';
 import bannerUtils from './utils/banner-utils';
 import Wishlist from '../wishlist';
-// IntuitSolutions.net - Interval Quantity
-import IntervalQuantity from '../custom/interval-quantity';
 
 export default class ProductDetails extends ProductDetailsBase {
     constructor($scope, context, productAttributesData = {}) {
@@ -78,10 +76,6 @@ export default class ProductDetails extends ProductDetailsBase {
         $productOptionsElement.show();
 
         this.previewModal = modalFactory('#previewModal')[0];
-        /**
-         * IntuitSolutions.net - Interval Quantity
-         */
-        this.interval = new IntervalQuantity(this.$scope);
     }
 
     setProductVariant() {
@@ -267,64 +261,54 @@ export default class ProductDetails extends ProductDetailsBase {
      * Handle action when the shopper clicks on + / - for quantity
      *
      */
-    // listenQuantityChange() {
-    //     this.$scope.on('click', '[data-quantity-change] button', event => {
-    //         event.preventDefault();
-    //         const $target = $(event.currentTarget);
-    //         const viewModel = this.getViewModel(this.$scope);
-    //         const $input = viewModel.quantity.$input;
-    //         const quantityMin = parseInt($input.data('quantityMin'), 10);
-    //         const quantityMax = parseInt($input.data('quantityMax'), 10);
-
-    //         let qty = parseInt($input.val(), 10);
-
-    //         // If action is incrementing
-    //         if ($target.data('action') === 'inc') {
-    //             // If quantity max option is set
-    //             if (quantityMax > 0) {
-    //                 // Check quantity does not exceed max
-    //                 if ((qty + 1) <= quantityMax) {
-    //                     qty++;
-    //                 }
-    //             } else {
-    //                 qty++;
-    //             }
-    //         } else if (qty > 1) {
-    //             // If quantity min option is set
-    //             if (quantityMin > 0) {
-    //                 // Check quantity does not fall below min
-    //                 if ((qty - 1) >= quantityMin) {
-    //                     qty--;
-    //                 }
-    //             } else {
-    //                 qty--;
-    //             }
-    //         }
-
-    //         // update hidden input
-    //         viewModel.quantity.$input.val(qty);
-    //         // update text
-    //         viewModel.quantity.$text.text(qty);
-    //     });
-
-    //     // Prevent triggering quantity change when pressing enter
-    //     this.$scope.on('keypress', '.form-input--incrementTotal', event => {
-    //         // If the browser supports event.which, then use event.which, otherwise use event.keyCode
-    //         const x = event.which || event.keyCode;
-    //         if (x === 13) {
-    //             // Prevent default
-    //             event.preventDefault();
-    //         }
-    //     });
-    // }
-
-    /**
-     * IntuitSolutions.net - Interval Quantity
-     */
     listenQuantityChange() {
         this.$scope.on('click', '[data-quantity-change] button', event => {
             event.preventDefault();
-            this.interval.handleQuantityChange(event);
+            const $target = $(event.currentTarget);
+            const viewModel = this.getViewModel(this.$scope);
+            const $input = viewModel.quantity.$input;
+            const quantityMin = parseInt($input.data('quantityMin'), 10);
+            const quantityMax = parseInt($input.data('quantityMax'), 10);
+
+            let qty = parseInt($input.val(), 10);
+
+            // If action is incrementing
+            if ($target.data('action') === 'inc') {
+                // If quantity max option is set
+                if (quantityMax > 0) {
+                    // Check quantity does not exceed max
+                    if ((qty + 1) <= quantityMax) {
+                        qty++;
+                    }
+                } else {
+                    qty++;
+                }
+            } else if (qty > 1) {
+                // If quantity min option is set
+                if (quantityMin > 0) {
+                    // Check quantity does not fall below min
+                    if ((qty - 1) >= quantityMin) {
+                        qty--;
+                    }
+                } else {
+                    qty--;
+                }
+            }
+
+            // update hidden input
+            viewModel.quantity.$input.val(qty);
+            // update text
+            viewModel.quantity.$text.text(qty);
+        });
+
+        // Prevent triggering quantity change when pressing enter
+        this.$scope.on('keypress', '.form-input--incrementTotal', event => {
+            // If the browser supports event.which, then use event.which, otherwise use event.keyCode
+            const x = event.which || event.keyCode;
+            if (x === 13) {
+                // Prevent default
+                event.preventDefault();
+            }
         });
     }
 

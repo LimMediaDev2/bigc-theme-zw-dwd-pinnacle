@@ -2700,6 +2700,11 @@ $('#body.product-page-layout .main-image-container .slick-list.draggable').attr(
 $('#body.product-page-layout .main-image-container figure.productView-image img').attr('style', 'max-height:' +mainProductImgWidth+ 'px !important');
 $('#body.product-page-layout .main-image-container figure.productView-image img').css("max-width", +mainProductImgWidth+"px");
 });
+$('.mobile-search .navUser-action.account.search').click(function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  $('header.header').toggleClass('is-open-search');
+});
 </script>
 
 <script>

@@ -18,94 +18,24 @@ export default class Cart extends PageManager {
         this.bindEvents();
     }
 
-    // cartUpdate($target) {
-    //     const itemId = $target.data('cartItemid');
-    //     const $el = $(`#qty-${itemId}`);
-    //     const oldQty = parseInt($el.val(), 10);
-    //     const maxQty = parseInt($el.data('quantityMax'), 10);
-    //     const minQty = parseInt($el.data('quantityMin'), 10);
-    //     const minError = $el.data('quantityMinError');
-    //     const maxError = $el.data('quantityMaxError');
-    //     const newQty = $target.data('action') === 'inc' ? oldQty + 1 : oldQty - 1;
-    //     // Does not quality for min/max quantity
-    //     if (newQty < minQty) {
-    //         return swal.fire({
-    //             text: minError,
-    //             icon: 'error',
-    //         });
-    //     } else if (maxQty > 0 && newQty > maxQty) {
-    //         return swal.fire({
-    //             text: maxError,
-    //             icon: 'error',
-    //         });
-    //     }
-
-    //     this.$overlay.show();
-
-    //     utils.api.cart.itemUpdate(itemId, newQty, (err, response) => {
-    //         this.$overlay.hide();
-
-    //         if (response.data.status === 'succeed') {
-    //             // if the quantity is changed "1" from "0", we have to remove the row.
-    //             const remove = (newQty === 0);
-
-    //             this.refreshContent(remove);
-    //         } else {
-    //             $el.val(oldQty);
-    //             swal.fire({
-    //                 text: response.data.errors.join('\n'),
-    //                 icon: 'error',
-    //             });
-    //         }
-    //     });
-    // }
-
-    /**
-     * IntuitSolutions.net - Interval Quantity
-     */
     cartUpdate($target) {
         const itemId = $target.data('cartItemid');
         const $el = $(`#qty-${itemId}`);
-        let oldQty = parseInt($el.val(), 10);
+        const oldQty = parseInt($el.val(), 10);
         const maxQty = parseInt($el.data('quantityMax'), 10);
         const minQty = parseInt($el.data('quantityMin'), 10);
-        const interval = Number($el.data('interval')) || 1;
-        let newQty = null;
-
-        // handles very first button click to get quantity in line with the interval
-        if (oldQty === 1 && interval !== 1) {
-            oldQty = 0;
-        }
-
-        // if user clicked a button, increment or decrement the qty
-        if ($target.hasClass('button')) {
-            newQty = $target.data('action') === 'inc'
-                ? oldQty + interval
-                : oldQty - interval;
-        } else {
-            newQty = oldQty;
-        }
-
-        // check min/max qty
+        const minError = $el.data('quantityMinError');
+        const maxError = $el.data('quantityMaxError');
+        const newQty = $target.data('action') === 'inc' ? oldQty + 1 : oldQty - 1;
+        // Does not quality for min/max quantity
         if (newQty < minQty) {
-            newQty = minQty;
-            swal.fire({
-                text: `The minimum purchasable quantity is ${minQty}`,
+            return swal.fire({
+                text: minError,
                 icon: 'error',
             });
-        } else if (newQty > maxQty) {
-            newQty = maxQty;
-            swal.fire({
-                text: `The maximum purchasable quantity is ${maxQty}`,
-                icon: 'error',
-            });
-        }
-
-        // check interval qty
-        if ((newQty % interval) !== 0) {
-            newQty = newQty + (interval - (newQty % interval)); // correct the quantity for the user
-            swal.fire({
-                text: `Please enter increments of ${interval}.`,
+        } else if (maxQty > 0 && newQty > maxQty) {
+            return swal.fire({
+                text: maxError,
                 icon: 'error',
             });
         }
@@ -295,14 +225,6 @@ export default class Cart extends PageManager {
 
             // update cart quantity
             cartUpdate($target);
-        });
-
-        /**
-         * IntuitSolutions.net - Interval Quantity
-         */
-        $('.form-input--incrementTotal', this.$cartContent).on('change', (event) => {
-            const $target = $(event.currentTarget);
-            cartUpdate($target); // update cart quantity
         });
 
         // cart qty manually updates

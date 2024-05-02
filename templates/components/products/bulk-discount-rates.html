@@ -1,112 +1,42 @@
-{{#if bulk_discount_rates.length}}
-    <style>
-        .productView-table-bulkPricing,
-        .productView-table-bulkPricing th,
-        .productView-table-bulkPricing td {
-        	background-color: #FFF4D1;
-        	border: 1px solid black;
-        	font-size: 1rem;
-        	font-weight: 900;
-        	padding-top: 0.35714rem;
-            padding-right: 0.71429rem;
-            padding-bottom: 0.35714rem;
-            padding-left: 0.71429rem;
-        	text-align: center;
-        }
-        .productView-table-bulkPricing th:last-child,
-        .productView-table-bulkPricing td:last-child {
-        	color: #d42020;
-        }
-        .productView-title-bulkPricing {
-        	font-size: 1.71429rem;
-        	font-weight: 700;
-        	text-align: left;
-        	text-transform: capitalize;
-        }
-        .productView-info-bulkPricing {
-            align-items: center;
-            column-gap: 2rem;
-        	font-family: "Roboto", Arial, Helvetica, sans-serif;
-        	padding: 3rem 0;
-        	width: 100%;
-        }
-    </style>
-
-    {{!-- 
-    <dt class="productView-info-name">{{lang 'products.bulk_pricing.title'}}</dt>
-    <dd class="productView-info-value">
-        <a href="{{url}}" data-reveal-id="bulkPricingModal-{{id}}-{{$index}}">
-            {{lang 'products.bulk_pricing.view'}}
-        </a>
-    </dd>
-    <div id="bulkPricingModal-{{id}}-{{$index}}" class="modal modal--small" data-reveal>
-        <div class="modal-header">
-            <h2 class="modal-header-title">{{lang 'products.bulk_pricing.modal_title'}}</h2>
-            <a href="#" class="modal-close" aria-label="Close"><span aria-hidden="true">&#215;</span></a>
-        </div>
-
-        <div class="modal-body">
-            <p>{{lang 'products.bulk_pricing.instructions'}}</p>
-            <ul>
-                {{#each bulk_discount_rates}}
-                    <li>
-                        {{lang 'products.bulk_pricing.range' min=min max=max}}
-                        {{#if type '===' 'percent'}}
-                            {{lang 'products.bulk_pricing.percent' discount=discount.formatted}}
-                        {{/if}}
-                        {{#if type '===' 'fixed'}}
-                            {{lang 'products.bulk_pricing.fixed' discount=discount.formatted}}
-                        {{/if}}
-                        {{#if type '===' 'price'}}
-                            {{lang 'products.bulk_pricing.price' discount=discount.formatted}}
-                        {{/if}}
-                    </li>
-                {{/each}}
-            </ul>
-        </div>
-    </div>
-    --}}
-
-    <p>&nbsp;</p>
-    <h2 class="productView-title-bulkPricing">Quantity Discounts:</h2>
-
-    <table class="productView-table-bulkPricing">
+{{!-- LimMedia.io --}}
+{{#if bulk_discount_rates.length '>' 0}}
+<h2 class="productView-title-bulkPricing">{{lang 'products.bulk_pricing.title'}}</h2>
+<table class="productView-table-bulkPricing">
+    <tbody>
         <tr>
-            <th>Quantity</th>
-            <th>Price Each</th>
-            <th>Savings</th>
+            <th>{{lang 'products.bulk_pricing.quantity_text'}}</th>
+            {{#each bulk_discount_rates}}
+            <td>
+                {{lang 'products.bulk_pricing.range_short' min=min max=max}}
+            </td>
+            {{/each}}
         </tr>
-
         <tr>
-            <td>1{{#if (subtract bulk_discount_rates.0.min 1) '>' 1}} - {{subtract bulk_discount_rates.0.min 1}}{{/if}}</td>
-            <td>{{price.without_tax.formatted}}</td>
-            <td></td>
+            <th>{{lang 'products.bulk_pricing.price_text'}}</th>
+            {{#each bulk_discount_rates}}
+            <td>
+                {{#if type '===' 'percent'}}
+                    {{#if ../price.with_tax}}
+                        {{money (subtract ../price.with_tax.value (divide (multiply discount.value ../price.with_tax.value) 100))}}
+                    {{else}}
+                        {{money (subtract ../price.without_tax.value (divide (multiply discount.value ../price.without_tax.value) 100))}}
+                    {{/if}}
+                {{/if}}
+                
+                {{#if type '===' 'fixed'}}
+                    {{discount.formatted}}
+                {{/if}}
+                
+                {{#if type '===' 'price'}}
+                    {{#if ../price.with_tax}}
+                        {{money (subtract ../price.with_tax.value discount.value)}}
+                    {{else}}
+                        {{money (subtract ../price.without_tax.value discount.value)}}
+                    {{/if}}
+                {{/if}}
+            </td>
+            {{/each}}
         </tr>
-
-        {{#each bulk_discount_rates}}
-            {{#if type '===' 'percent'}}
-                <tr data-custom-type="{{type}}">
-                    <td>{{min}}{{#if max '<=' 0}}+{{else}} - {{max}}{{/if}}</td> 
-                    <td>{{subtract ../../price.without_tax.value (divide (multiply discount.value ../../price.without_tax.value) 100)}}</td>
-                    <td>{{discount.formatted}}</td>
-                </tr>
-            {{/if}}
-
-            {{#if type '===' 'fixed'}}
-                <tr data-custom-type="{{type}}">
-                    <td>{{min}}{{#if max '<=' 0}}+{{else}} - {{max}}{{/if}}</td> 
-                    <td>${{toFixed (divide (multiply (subtract ../../price.without_tax.value discount.value) 100) ../../price.without_tax.value) 2}}</td>
-                    <td>{{round (divide (multiply discount.value 100) ../../price.without_tax.value)}}%</td>
-                </tr>
-            {{/if}}
-
-            {{#if type '===' 'price'}}
-                <tr data-custom-type="{{type}}">
-                    <td>{{min}} {{#if max '<=' 0}}+{{else}}- {{max}}{{/if}}</td> 
-                    <td>${{toFixed (subtract ../../price.without_tax.value discount.value) 2}}</td>
-                    <td>{{round (divide (multiply discount.value 100) ../../price.without_tax.value)}}%</td>
-                </tr>
-            {{/if}}
-        {{/each}}
-    </table>
+    </tbody>
+</table>
 {{/if}}

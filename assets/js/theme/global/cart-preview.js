@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import 'foundation-sites/js/foundation/foundation';
 import 'foundation-sites/js/foundation/foundation.dropdown';
 import utils from '@bigcommerce/stencil-utils';
@@ -11,7 +10,7 @@ export const CartPreviewEvents = {
 export default function (secureBaseUrl, cartId) {
     const loadingClass = 'is-loading';
     const $cart = $('[data-cart-preview]');
-    const $cartDropdown = $('#cart-preview-dropdown');
+    const $cartDropdown = $('.cart-dropdown-menu');
     const $cartLoading = $('<div class="loadingOverlay"></div>');
 
     const $body = $('body');

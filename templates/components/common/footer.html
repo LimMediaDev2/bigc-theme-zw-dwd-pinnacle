@@ -293,6 +293,11 @@ $('div#side-categories.alternate li.navPages-item.is-root').hover(
 
     }
 );
+$('.mobile-search .navUser-action.account.search').click(function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  $('header.header').toggleClass('is-open-search');
+});
 });
 </script>
 

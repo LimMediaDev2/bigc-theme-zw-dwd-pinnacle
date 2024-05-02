@@ -1,3 +1,3 @@
 {
-  "custom.scss": ".form-input--incrementTotal {\n    width: auto;\n    max-width: 100px;\n}"
+  "custom.scss": "// PASTE CUSTOM STYLING HERE\n"
 }

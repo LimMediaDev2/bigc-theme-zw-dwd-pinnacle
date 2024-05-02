@@ -1429,4 +1429,9 @@ $('.mobileMenu-toggle').click(function(e){
   e.stopPropagation();
   $('header.header').toggleClass('is-open');
 });
+$('.mobile-search .navUser-action.account.search').click(function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  $('header.header').toggleClass('is-open-search');
+});
 </script>
