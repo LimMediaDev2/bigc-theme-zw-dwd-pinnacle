@@ -11,6 +11,13 @@ import { isBrowserIE, convertIntoArray } from './utils/ie-helpers';
 import bannerUtils from './utils/banner-utils';
 import Wishlist from '../wishlist';
 
+import { getDataFromGraphql } from './graphQLService';
+
+/**
+ * IntuitSolutions.net - Interval Quantity
+ * LimMedia.io
+ */
+import IntervalQuantity from '../custom/interval-quantity';
 export default class ProductDetails extends ProductDetailsBase {
     constructor($scope, context, productAttributesData = {}) {
         super($scope, context);
@@ -21,6 +28,12 @@ export default class ProductDetails extends ProductDetailsBase {
         this.listenQuantityChange();
         this.$swatchOptionMessage = $('.swatch-option-message');
         this.swatchOptionMessageInitText = this.$swatchOptionMessage.text();
+
+        this.$priceTotalSection = $('.priceTotal', this.$scope);
+        this.$priceTotal = $('.priceTotal .priceTotal-value', this.$scope);
+        this.$productQtyEl = $('.form-input--incrementTotal', this.$scope);
+
+        this.$productPriceEl = $('.price.price--withoutTax', this.$scope);
 
         const $form = $('form[data-cart-item-add]', $scope);
         const $productOptionsElement = $('[data-product-option-change]', $form);
@@ -67,7 +80,7 @@ export default class ProductDetails extends ProductDetailsBase {
             const $productId = $('[name="product_id"]', $form).val();
             const optionChangeCallback = optionChangeDecorator.call(this, hasDefaultOptions);
 
-            utils.api.productAttributes.optionChange($productId, $form.serialize(), 'products/bulk-discount-rates', optionChangeCallback);
+            utils.api.productAttributes.optionChange($productId, $form.serialize(), optionChangeCallback);
         } else {
             this.updateProductAttributes(productAttributesData);
             bannerUtils.dispatchProductBannerEvent(productAttributesData);
@@ -76,6 +89,14 @@ export default class ProductDetails extends ProductDetailsBase {
         $productOptionsElement.show();
 
         this.previewModal = modalFactory('#previewModal')[0];
+
+        /**
+         * IntuitSolutions.net - Interval Quantity
+         * LimMedia.io
+         */
+        this.interval = new IntervalQuantity(this.$scope);
+        this.originalPrice = parseFloat(this.$productPriceEl.html().replace(/\$|,/g, ''), 10)
+        this.getBulkPricing();
     }
 
     setProductVariant() {
@@ -207,12 +228,14 @@ export default class ProductDetails extends ProductDetailsBase {
             return;
         }
 
-        utils.api.productAttributes.optionChange(productId, $form.serialize(), 'products/bulk-discount-rates', (err, response) => {
-            const productAttributesData = response.data || {};
-            const productAttributesContent = response.content || {};
+        utils.api.productAttributes.optionChange(productId, $form.serialize(), async (err, response) => {
+            const res = await response;
+            const productAttributesData = res.data || {};
+            const productAttributesContent = res.content || {};
             this.updateProductAttributes(productAttributesData);
             this.updateView(productAttributesData, productAttributesContent);
             bannerUtils.dispatchProductBannerEvent(productAttributesData);
+            this.updatePriceTotal();
         });
     }
 
@@ -299,6 +322,8 @@ export default class ProductDetails extends ProductDetailsBase {
             viewModel.quantity.$input.val(qty);
             // update text
             viewModel.quantity.$text.text(qty);
+            // update total price value
+            // this.updatePriceTotal(qty);
         });
 
         // Prevent triggering quantity change when pressing enter
@@ -311,6 +336,29 @@ export default class ProductDetails extends ProductDetailsBase {
             }
         });
     }
+
+    /**
+     * IntuitSolutions.net - Interval Quantity
+     * LimMedia.io
+     */
+    // listenQuantityChange() {
+    //     this.$scope.on('click', '[data-quantity-change] button', event => {
+    //         event.preventDefault();
+    //         this.interval.handleQuantityChange(event);
+    //         this.updatePriceTotal();
+    //     });
+
+    //     // Prevent triggering quantity change when pressing enter
+    //     this.$scope.on('keypress', '.form-input--incrementTotal', event => {
+    //         // If the browser supports event.which, then use event.which, otherwise use event.keyCode
+    //         const x = event.which || event.keyCode;
+    //         if (x === 13) {
+    //             // Prevent default
+    //             event.preventDefault();
+    //             this.updatePriceTotal();
+    //         }
+    //     });
+    // }
 
     /**
      *
@@ -460,5 +508,81 @@ export default class ProductDetails extends ProductDetailsBase {
     updateProductAttributes(data) {
         super.updateProductAttributes(data);
         this.showProductImage(data.image);
+    }
+
+    async getBulkPricing() {
+        const productId = $('[name="product_id"]', this.$scope).val();
+        await getDataFromGraphql('getProductData', this.context.sfToken, { id: productId, fields: `
+            prices {
+                bulkPricing {
+                    ... on BulkPricingFixedPriceDiscount {
+                        price
+                        minimumQuantity
+                        maximumQuantity
+                    }
+                    ... on BulkPricingPercentageDiscount {
+                        percentOff
+                        minimumQuantity
+                        maximumQuantity
+                    }
+                    ... on BulkPricingRelativePriceDiscount {
+                        priceAdjustment
+                        minimumQuantity
+                        maximumQuantity
+                    }
+                }
+            }
+        `}).then(data => {
+            this.bulkPrices = data?.prices?.bulkPricing;
+            this.updatePriceTotal();
+        });
+    }
+
+    adjustPrice(productPrice, qty) {
+        let priceDiff = 0;
+
+        if (this.originalPrice > productPrice) {
+            priceDiff = parseFloat(this.originalPrice - productPrice);
+        } else {
+            priceDiff = parseFloat(productPrice - this.originalPrice);  
+        }
+
+        if (!this.bulkPrices || this.bulkPrices.length === 0) return productPrice;
+
+        const bulkPrice = this.bulkPrices.reduce((prev, item) => {
+            return item.minimumQuantity && qty >= item.minimumQuantity && item.minimumQuantity > prev.minimumQuantity ? item : prev;
+        }, { minimumQuantity: 1 });
+
+        if (bulkPrice.minimumQuantity == 1 && typeof bulkPrice.maximumQuantity === 'undefined') {
+            priceDiff = 0;
+        }
+
+        // Case of BulkPricingRelativePriceDiscount
+        if (bulkPrice.priceAdjustment) {
+            return (priceDiff + (productPrice - bulkPrice.priceAdjustment)).toFixed(2);
+        }
+        // Case of BulkPricingPercentageDiscount
+        else if (bulkPrice.percentOff) {
+            return (priceDiff + (productPrice - ((productPrice / 100) * bulkPrice.percentOff))).toFixed(2);
+        }
+        // Case of BulkPricingFixedPriceDiscount
+        else if (bulkPrice.price) {
+            return (priceDiff + bulkPrice.price).toFixed(2);
+        } else {
+            return (priceDiff + productPrice).toFixed(2);
+        }
+    }
+
+    async updatePriceTotal(qty = null) {
+        const productQty = qty || parseInt(this.$productQtyEl.val(), 10);
+        let productPrice = parseFloat(this.$productPriceEl.html().replace(/\$|,/g, ''), 10);
+
+        if (productQty && productPrice) {
+            productPrice = this.adjustPrice(productPrice, productQty);
+            this.$priceTotal.html(`$${(productQty * productPrice).toFixed(2)}`);
+            this.$priceTotalSection.show();
+        } else {
+            this.$priceTotalSection.hide();
+        }
     }
 }

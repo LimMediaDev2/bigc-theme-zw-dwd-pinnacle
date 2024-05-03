@@ -1,5 +1,5 @@
+{{!-- LimMedia.io --}}
 {{#if show_compare}}
-
 <article class="card compare-enabled {{#if alternate}}card--alternate{{/if}} price-visibility{{#or customer (if theme_settings.restrict_to_login '===' true)}} restricted{{/or}} {{#if theme_settings.card-brand-name '===' true}}brand-sku-active{{/if}} {{#if theme_settings.card-brand-name '===' false}}brand-hidden{{/if}} {{#if theme_settings.card-sku '===' true}}brand-sku-active{{/if}} {{#if theme_settings.card-sku '===' false}}sku-hidden{{/if}} {{#if theme_settings.card-title-lines '===' '2-lines'}}card-title-two-lines{{/if}} {{#if theme_settings.card-title-lines '===' '3-lines'}}card-title-three-lines{{/if}} {{#if theme_settings.cardTitle-fontSize '==' '14'}}card-title-fourteen{{/if}} {{#if theme_settings.cardTitle-fontSize '==' '16'}}card-title-sixteen{{/if}} {{#if theme_settings.cardTitle-fontFamily '==' 'IBM+Plex+Sans_700'}}ibm-fonts{{/if}}">
     <figure class="card-figure {{#if images.length '>' 1}} multiple-images{{/if}} {{#if theme_settings.product_hover_images '===' 'active'}} second-hover-img-active{{/if}}">
     {{#or price.non_sale_price_with_tax price.non_sale_price_without_tax}}

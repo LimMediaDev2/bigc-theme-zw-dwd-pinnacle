@@ -3,6 +3,7 @@ blog:
     recent_posts:
         limit: {{theme_settings.homepage_blog_posts_count}}
 ---
+{{!-- LimMedia.io --}}
 {{#partial "page"}}
 {{inject 'comparisons' comparisons}}
 {{inject 'compareRemoveMessage' (lang 'compare.no_remove')}}
@@ -69,7 +70,7 @@ blog:
                                       {{#if price_range}}
                                         {{> components/products/price-range}}
                                       {{else}}
-                                        {{> components/products/price price=price}}
+                                        {{> components/products/price settings=settings sharedProduct=this price=price}}
                                       {{/if}}
                                       {{else}}
                                         {{> components/common/login-for-pricing}}
@@ -204,7 +205,7 @@ blog:
                                     {{#if price_range}}
                                       {{> components/products/price-range}}
                                     {{else}}
-                                      {{> components/products/price price=price}}
+                                      {{> components/products/price settings=settings sharedProduct=this price=price}}
                                     {{/if}}
                                     {{else}}
                                       {{> components/common/login-for-pricing}}
@@ -342,7 +343,7 @@ blog:
                               {{#if price_range}}
                                 {{> components/products/price-range}}
                               {{else}}
-                                {{> components/products/price price=price}}
+                                {{> components/products/price settings=settings sharedProduct=this price=price}}
                               {{/if}}
                               {{else}}
                                 {{> components/common/login-for-pricing}}
@@ -471,7 +472,7 @@ blog:
                                     {{#if price_range}}
                                       {{> components/products/price-range}}
                                     {{else}}
-                                      {{> components/products/price price=price}}
+                                      {{> components/products/price settings=settings sharedProduct=this price=price}}
                                     {{/if}}
                                     {{else}}
                                       {{> components/common/login-for-pricing}}
@@ -609,7 +610,7 @@ blog:
                             {{#if price_range}}
                               {{> components/products/price-range}}
                             {{else}}
-                              {{> components/products/price price=price}}
+                              {{> components/products/price settings=settings sharedProduct=this price=price}}
                             {{/if}}
                             {{else}}
                               {{> components/common/login-for-pricing}}
@@ -742,7 +743,7 @@ blog:
                                       {{#if price_range}}
                                         {{> components/products/price-range}}
                                       {{else}}
-                                        {{> components/products/price price=price}}
+                                        {{> components/products/price settings=settings sharedProduct=this price=price}}
                                       {{/if}}
                                       {{else}}
                                         {{> components/common/login-for-pricing}}
@@ -922,7 +923,7 @@ blog:
                                           {{#if price_range}}
                                             {{> components/products/price-range}}
                                           {{else}}
-                                            {{> components/products/price price=price}}
+                                            {{> components/products/price settings=settings sharedProduct=this price=price}}
                                           {{/if}}
                                           {{else}}
                                             {{> components/common/login-for-pricing}}
@@ -1057,7 +1058,7 @@ blog:
                                         {{#if price_range}}
                                           {{> components/products/price-range}}
                                         {{else}}
-                                          {{> components/products/price price=price}}
+                                          {{> components/products/price settings=settings sharedProduct=this price=price}}
                                         {{/if}}
                                         {{else}}
                                           {{> components/common/login-for-pricing}}
@@ -1195,7 +1196,7 @@ blog:
                                   {{#if price_range}}
                                     {{> components/products/price-range}}
                                   {{else}}
-                                    {{> components/products/price price=price}}
+                                    {{> components/products/price settings=settings sharedProduct=this price=price}}
                                   {{/if}}
                                   {{else}}
                                     {{> components/common/login-for-pricing}}
@@ -1324,7 +1325,7 @@ blog:
                                         {{#if price_range}}
                                           {{> components/products/price-range}}
                                         {{else}}
-                                          {{> components/products/price price=price}}
+                                          {{> components/products/price settings=settings sharedProduct=this price=price}}
                                         {{/if}}
                                         {{else}}
                                           {{> components/common/login-for-pricing}}
@@ -1462,7 +1463,7 @@ blog:
                                 {{#if price_range}}
                                   {{> components/products/price-range}}
                                 {{else}}
-                                  {{> components/products/price price=price}}
+                                  {{> components/products/price settings=settings sharedProduct=this price=price}}
                                 {{/if}}
                                 {{else}}
                                   {{> components/common/login-for-pricing}}
@@ -1595,7 +1596,7 @@ blog:
                                           {{#if price_range}}
                                             {{> components/products/price-range}}
                                           {{else}}
-                                            {{> components/products/price price=price}}
+                                            {{> components/products/price settings=settings sharedProduct=this price=price}}
                                           {{/if}}
                                           {{else}}
                                             {{> components/common/login-for-pricing}}

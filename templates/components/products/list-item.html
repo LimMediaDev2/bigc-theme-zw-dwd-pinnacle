@@ -1,3 +1,4 @@
+{{!-- LimMedia.io --}}
 <article class="listItem {{#if show_compare}} compare-enabled {{else}} compare-disabled{{/if}}">
     <figure class="listItem-figure {{#if images.[1]}}multiple-images{{/if}}">
       {{#or price.non_sale_price_with_tax price.non_sale_price_without_tax}}
@@ -64,7 +65,9 @@
             <div class="listItem-actions">
                 {{#or customer (if theme_settings.restrict_to_login '!==' true)}}
                     {{#if price}}
-                        <div class="listItem-price">{{> components/products/price price=price}}</div>
+                        <div class="listItem-price">
+                            {{> components/products/price settings=settings sharedProduct=this price=price schema_org=schema}}
+                        </div>
                     {{/if}}
                     {{#if show_cart_action}}
                         {{#if has_options}}

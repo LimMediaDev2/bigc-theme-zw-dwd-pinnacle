@@ -11,6 +11,8 @@
 
 /*! npm.im/object-fit-images 3.2.4 */
 
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
+
 /**
  * SVGInjector v1.1.3 - Fast, caching, dynamic inline SVG DOM injection library
  * https://github.com/iconic/SVGInjector

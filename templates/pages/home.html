@@ -11,6 +11,8 @@ blog:
     recent_posts:
         limit: {{theme_settings.homepage_blog_posts_count}}
 ---
+{{!-- LimMedia.io --}}
+{{inject 'sfToken' settings.storefront_api.token}}
 {{#partial "hero"}}
 
 {{/partial}}

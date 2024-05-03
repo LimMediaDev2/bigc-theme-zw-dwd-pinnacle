@@ -1,3 +1,4 @@
+{{!-- LimMedia.io --}}
 <div class="productView thumbnail-unclicked{{#if theme_settings.show_product_quantity_box '===' true}} qty-box-visible{{/if}}" {{#if settings.data_tag_enabled}} data-event-type="product" data-entity-id="{{product.id}}" data-name="{{product.title}}" data-product-category="{{#each product.category}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}" data-product-brand="{{product.brand.name}}" data-product-price="{{#if product.price.with_tax}}{{product.price.with_tax.value}}{{else}}{{product.price.without_tax.value}}{{/if}}" data-product-variant="single-product-option"{{/if}}>
 {{#each product.reviews.messages}}
         {{#if error}}
@@ -183,7 +184,7 @@
 
                 {{#if settings.bulk_discount_enabled}}
                     <div class="productView-info-bulkPricing">
-                        {{> components/products/bulk-discount-rates bulk_discount_rates=product.bulk_discount_rates}}
+                        {{> components/products/bulk-discount-rates bulk_discount_rates=product.bulk_discount_rates price=product.price discount=discount}}
                     </div>
                 {{/if}}
 

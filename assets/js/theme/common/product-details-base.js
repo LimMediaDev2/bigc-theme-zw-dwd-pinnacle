@@ -17,11 +17,13 @@ const optionsTypesMap = {
 };
 
 export function optionChangeDecorator(areDefaultOtionsSet) {
-    return (err, response) => {
-        const attributesData = response.data || {};
-        const attributesContent = response.content || {};
+    return async (err, response) => {
+        const res = await response;
+        const attributesData = res.data || {};
+        const attributesContent = res.content || {};
 
         this.updateProductAttributes(attributesData);
+
         if (areDefaultOtionsSet) {
             this.updateView(attributesData, attributesContent);
         } else {
@@ -139,6 +141,7 @@ export default class ProductDetailsBase {
      */
     getViewModel($scope) {
         return {
+            //$priceAsLowAs: $('[data-product-price-as-low-as]', $scope), /** LimMedia.io */
             $priceWithTax: $('[data-product-price-with-tax]', $scope),
             $priceWithoutTax: $('[data-product-price-without-tax]', $scope),
             rrpWithTax: {
@@ -203,6 +206,10 @@ export default class ProductDetailsBase {
         viewModel.priceSaved.$div.hide();
         viewModel.priceNowLabel.$span.hide();
         viewModel.priceLabel.$span.hide();
+
+        // if (viewModel.$priceAsLowAs[0]) {
+        //     viewModel.$priceAsLowAs[0].style.display = 'none'; /** LimMedia.io */
+        // }
     }
 
     /**
@@ -215,7 +222,7 @@ export default class ProductDetailsBase {
         this.showMessageBox(data.stock_message || data.purchasing_message);
 
         if (isObject(data.price)) {
-            this.updatePriceView(viewModel, data.price);
+            this.updatePriceView(viewModel, data.price, data.sku || '', data.v3_variant_id || '');
         }
 
         if (isObject(data.weight)) {
@@ -258,11 +265,17 @@ export default class ProductDetailsBase {
 
         this.updateDefaultAttributesForOOS(data);
 
-        // If Bulk Pricing rendered HTML is available
-        if (data.bulk_discount_rates && content) {
-            viewModel.$bulkPricing.html(content);
+        let newContent = this.updateBulkDiscountTable(data.price, data.bulk_discount_rates);
+        // let getAsLowAs = this.getAsLowAs(data.price, data.bulk_discount_rates);
+
+        if (data.bulk_discount_rates && newContent) {
+            viewModel.$bulkPricing.html(newContent);
+            // viewModel.$priceAsLowAs.html(getAsLowAs);
+            // viewModel.$priceAsLowAs.show();
         } else if (typeof (data.bulk_discount_rates) !== 'undefined') {
             viewModel.$bulkPricing.html('');
+            // viewModel.$priceAsLowAs.html('');
+            // viewModel.$priceAsLowAs.hide();
         }
 
         const addToCartWrapper = $('#add-to-cart-wrapper');
@@ -279,12 +292,18 @@ export default class ProductDetailsBase {
     updatePriceView(viewModel, price) {
         this.clearPricingNotFound(viewModel);
 
+        // if (viewModel.$priceAsLowAs[0]) {
+        //     viewModel.$priceAsLowAs[0].dataset.productSku = product_sku; /** LimMedia.io */
+        //     viewModel.$priceAsLowAs[0].dataset.productVariantId = product_variant_id; /** LimMedia.io */
+        // }
+
         if (price.with_tax) {
             const updatedPrice = price.price_range ?
                 `${price.price_range.min.with_tax.formatted} - ${price.price_range.max.with_tax.formatted}`
                 : price.with_tax.formatted;
             viewModel.priceLabel.$span.show();
             viewModel.$priceWithTax.html(updatedPrice);
+            // viewModel.$priceAsLowAs.html(price.with_tax.formatted); /** LimMedia.io */
         }
 
         if (price.without_tax) {
@@ -293,21 +312,25 @@ export default class ProductDetailsBase {
                 : price.without_tax.formatted;
             viewModel.priceLabel.$span.show();
             viewModel.$priceWithoutTax.html(updatedPrice);
+            // viewModel.$priceAsLowAs.html(price.without_tax.formatted); /** LimMedia.io */
         }
 
         if (price.rrp_with_tax) {
             viewModel.rrpWithTax.$div.show();
             viewModel.rrpWithTax.$span.html(price.rrp_with_tax.formatted);
+            // viewModel.$priceAsLowAs.html(price.rrp_with_tax.formatted); /** LimMedia.io */
         }
 
         if (price.rrp_without_tax) {
             viewModel.rrpWithoutTax.$div.show();
             viewModel.rrpWithoutTax.$span.html(price.rrp_without_tax.formatted);
+            // viewModel.$priceAsLowAs.html(price.rrp_without_tax.formatted); /** LimMedia.io */
         }
 
         if (price.saved) {
             viewModel.priceSaved.$div.show();
             viewModel.priceSaved.$span.html(price.saved.formatted);
+            // viewModel.$priceAsLowAs.html(price.saved.formatted); /** LimMedia.io */
         }
 
         if (price.non_sale_price_with_tax) {
@@ -315,6 +338,7 @@ export default class ProductDetailsBase {
             viewModel.nonSaleWithTax.$div.show();
             viewModel.priceNowLabel.$span.show();
             viewModel.nonSaleWithTax.$span.html(price.non_sale_price_with_tax.formatted);
+            // viewModel.$priceAsLowAs.html(price.non_sale_price_with_tax.formatted); /** LimMedia.io */
         }
 
         if (price.non_sale_price_without_tax) {
@@ -322,7 +346,12 @@ export default class ProductDetailsBase {
             viewModel.nonSaleWithoutTax.$div.show();
             viewModel.priceNowLabel.$span.show();
             viewModel.nonSaleWithoutTax.$span.html(price.non_sale_price_without_tax.formatted);
+            // viewModel.$priceAsLowAs.html(price.non_sale_price_without_tax.formatted); /** LimMedia.io */
         }
+
+        // if (viewModel.$priceAsLowAs[0]) {
+        //     viewModel.$priceAsLowAs[0].style.display = 'block'; /** LimMedia.io */
+        // }
     }
 
     /**
@@ -404,5 +433,112 @@ export default class ProductDetailsBase {
             $attribute.prop('disabled', false);
             $attribute.html($attribute.html().replace(outOfStockMessage, ''));
         }
+    }
+
+    /**
+     * Custom Bulk Discount Table
+     * @author LimMedia.io
+     * @param {*} price 
+     * @param {*} bulk_discount_rates 
+     * @returns 
+     */
+    updateBulkDiscountTable(price, bulk_discount_rates) {
+        if (bulk_discount_rates.length == 0) {
+            return '';
+        }
+
+        let TableData = `<h2 class="productView-title-bulkPricing">Quantity Discounts</h2>
+        <table class="productView-table-bulkPricing">
+            <tbody>
+                <tr>
+                    <th>Quantity</th>`;
+
+        bulk_discount_rates.forEach((bulk_discount_rate, i) => {
+            TableData = TableData + `<td>` + bulk_discount_rate.min.toString() + (bulk_discount_rate.max > 1 ? ' - ' + bulk_discount_rate.max : '+') + `</td>`;
+        });
+
+        TableData = TableData + `</tr><tr><th>Price each</th>`;
+
+        bulk_discount_rates.forEach((bulk_discount_rate, i) => {
+            TableData = TableData + `<td>`;
+
+            let value = 0;
+
+            if (!(typeof price.with_tax === 'undefined')) {
+                value = price.with_tax.value;
+            } else {
+                value = price.without_tax.value;
+            }
+
+            if (bulk_discount_rate.type == 'percent') {
+                TableData = TableData + this.moneyFormatterLocal(value - ((bulk_discount_rate.discount.value * value) / 100));
+            }
+
+            if (bulk_discount_rate.type == 'fixed') {
+                TableData = TableData + bulk_discount_rate.discount.formatted.toString();
+            }
+
+            if (bulk_discount_rate.type == 'price') {
+                TableData = TableData + this.moneyFormatterLocal(value - bulk_discount_rate.discount.value);
+            }
+
+            TableData = TableData + `</td>`;
+        });
+
+        TableData = TableData + `</tr></tbody></table>`;
+
+        return TableData;
+    }
+
+    /**
+     * Custom Get as Low As Price
+     * @author LimMedia.io
+     * @param {*} price 
+     * @param {*} bulk_discount_rates 
+     * @returns 
+     */
+    getAsLowAs(price, bulk_discount_rates) {
+        let priceDiff = 0;
+
+        if (this.originalPrice > price.without_tax.value) {
+            priceDiff = parseFloat(this.originalPrice - price.without_tax.value);
+        } else {
+            priceDiff = parseFloat(price.without_tax.value - this.originalPrice);
+        }
+
+        if (bulk_discount_rates.length == 0) {
+            return 'As Low As ' + this.moneyFormatterLocal(priceDiff + price.without_tax.value);
+        }
+
+        let last = bulk_discount_rates[bulk_discount_rates.length - 1];
+
+        if (last.type == 'percent') {
+            return 'As Low As ' + this.moneyFormatterLocal(priceDiff + (price.without_tax.value - ((last.discount.value * price.without_tax.value) / 100)));
+        }
+
+        if (last.type == 'fixed') {
+            return 'As Low As ' + this.moneyFormatterLocal(priceDiff + parseFloat(last.discount.formatted.toString().replace(/[^0-9\.]/g, "")));
+        }
+
+        if (last.type == 'price') {
+            return 'As Low As ' + this.moneyFormatterLocal(priceDiff + (price.without_tax.value - last.discount.value));
+        }
+
+        return 'As Low As ' + this.moneyFormatterLocal(priceDiff + price.without_tax.value);
+    }
+
+    /**
+     * Custom Money Formatter
+     * @author LimMedia.io
+     * @param {*} money 
+     * @returns 
+     */
+    moneyFormatterLocal(money) {
+        let formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        });
+
+        return formatter.format(money).toString();
     }
 }

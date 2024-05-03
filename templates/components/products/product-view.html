@@ -1,3 +1,4 @@
+{{!-- LimMedia.io --}}
 <div class="productView thumbnail-unclicked{{#if theme_settings.show_product_quantity_box '===' true}} qty-box-visible{{/if}}" {{#if settings.data_tag_enabled}} data-event-type="product" data-entity-id="{{product.id}}" data-name="{{product.title}}" data-product-category="{{#each product.category}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}" data-product-brand="{{product.brand.name}}" data-product-price="{{#if product.price.with_tax}}{{product.price.with_tax.value}}{{else}}{{product.price.without_tax.value}}{{/if}}" data-product-variant="single-product-option"{{/if}}>
     {{#each product.reviews.messages}}
         {{#if error}}
@@ -73,7 +74,7 @@
          {{/if}}
          <div class="productView-price">
              {{#or customer (if theme_settings.restrict_to_login '!==' true)}}
-                 {{> components/products/price price=product.price schema_org=schema}}
+                 {{> components/products/price settings=settings sharedProduct=product price=product.price schema_org=schema}}
              {{else}}
                  {{> components/common/login-for-pricing}}
              {{/or}}
@@ -111,10 +112,8 @@
 
          {{product.detail_messages}}
          <dl class="productView-info">
-            {{#if product.sku}}
-            <dt class="productView-info-name">{{lang 'products.sku'}}</dt>
+            <dt class="productView-info-name sku-label"{{#unless product.sku}} style="display: none;"{{/unless}}>{{lang 'products.sku'}}</dt>
             <dd class="productView-info-value" data-product-sku>{{product.sku}}</dd>
-            {{/if}}
             {{#if product.upc}}
                  <dt class="productView-info-name">{{lang 'products.upc'}}</dt>
                  <dd class="productView-info-value" data-product-upc>{{product.upc}}</dd>
@@ -196,8 +195,8 @@
              {{/if}}
 
              {{#each product.custom_fields}}
-                 <dt class="productView-info-name">{{name}}:</dt>
-                 <dd class="productView-info-value">{{{value}}}</dd>
+                 <dt class="productView-info-name {{dashcase name}}">{{name}}:</dt>
+                 <dd class="productView-info-value {{dashcase name}}">{{{value}}}</dd>
              {{/each}}
          </dl>
      </div>

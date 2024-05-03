@@ -1,11 +1,11 @@
-
+{{!-- LimMedia.io --}}
 <!-- No Tabs, In Carousels -->
 {{#if theme_settings.featured_products_layout '===' 'no-tabs-in-carousels'}}
 <div class="featured-products no-tabs-in-carousels">
   <ul class="productGrid productGrid--maxCol{{ columns }}" data-product-type="featured">
     {{#each products}}
         <li class="product">
-            {{>components/products/card show_compare=../show_compare show_rating=../settings.show_product_rating theme_settings=../theme_settings customer=../customer}}
+            {{>components/products/card settings=../settings show_compare=../show_compare show_rating=../settings.show_product_rating theme_settings=../theme_settings customer=../customer}}
         </li>
     {{/each}}
 </ul>
@@ -19,7 +19,7 @@
   <ul class="productGrid productGrid--maxCol{{ columns }}" data-product-type="featured">
     {{#each products}}
         <li class="product">
-          {{>components/products/card show_compare=../show_compare show_rating=../settings.show_product_rating theme_settings=../theme_settings customer=../customer}}
+          {{>components/products/card settings=../settings show_compare=../show_compare show_rating=../settings.show_product_rating theme_settings=../theme_settings customer=../customer}}
         </li>
     {{/each}}
   </ul>
@@ -33,7 +33,7 @@
   <ul class="productGrid productGrid--maxCol{{ columns }}" data-product-type="featured">
     {{#each products}}
         <li class="product">
-            {{>components/products/card show_compare=../show_compare show_rating=../settings.show_product_rating theme_settings=../theme_settings customer=../customer}}
+            {{>components/products/card settings=../settings show_compare=../show_compare show_rating=../settings.show_product_rating theme_settings=../theme_settings customer=../customer}}
         </li>
     {{/each}}
 </ul>
@@ -47,7 +47,7 @@
   <ul class="productGrid productGrid--maxCol{{ columns }}" data-product-type="featured">
     {{#each products}}
         <li class="product">
-            {{>components/products/card show_compare=../show_compare show_rating=../settings.show_product_rating theme_settings=../theme_settings customer=../customer}}
+            {{>components/products/card settings=../settings show_compare=../show_compare show_rating=../settings.show_product_rating theme_settings=../theme_settings customer=../customer}}
         </li>
     {{/each}}
 </ul>

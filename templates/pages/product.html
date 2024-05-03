@@ -12,7 +12,10 @@ blog:
     recent_posts:
         limit: {{theme_settings.homepage_blog_posts_count}}
 ---
+{{!-- LimMedia.io --}}
+{{inject 'sfToken' settings.storefront_api.token}}
 {{#partial "page"}}
+
 {{{region name="product_below_menu--global"}}}
 {{{region name="product_below_menu"}}}
 <div class="recommended-visibility{{#if theme_settings.productpage_related_products_count '===' 0}} disabled{{/if}}">

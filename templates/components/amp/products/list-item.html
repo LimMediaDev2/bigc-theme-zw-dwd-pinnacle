@@ -1,3 +1,4 @@
+{{!-- LimMedia.io --}}
 <article class="listItem">
     <figure class="listItem-figure">
         <amp-img src="{{getImage image 'productgallery_size' (cdn theme_settings.default_image_product)}}" width="{{first (split theme_settings.productgallery_size 'x')}}" height="{{last (split theme_settings.productgallery_size 'x')}}" layout="responsive" alt="{{image.alt}}"></amp-img>
@@ -20,7 +21,9 @@
             </div>
             <div class="listItem-actions">
                 {{#if price}}
-                    <div class="listItem-price">{{> components/products/price price=price}}</div>
+                    <div class="listItem-price">
+                        {{> components/products/price settings=settings sharedProduct=this price=price schema_org=schema}}
+                    </div>
                 {{/if}}
                 {{#unless hide_add_to_cart}}
                     {{#if has_options}}
