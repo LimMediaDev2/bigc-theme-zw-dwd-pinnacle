@@ -15,23 +15,49 @@
             <th>{{lang 'products.bulk_pricing.price_text'}}</th>
             {{#each bulk_discount_rates}}
             <td>
-                {{#if type '===' 'fixed'}}
-                    {{discount.formatted}}
-                {{/if}}
-                
                 {{#if type '===' 'percent'}}
-                    {{#if ../../../price.with_tax}}
+                    {{#if ../../price.with_tax}}
                         {{money (subtract ../../../price.with_tax.value (divide (multiply discount.value ../../../price.with_tax.value) 100))}}
                     {{else}}
                         {{money (subtract ../../../price.without_tax.value (divide (multiply discount.value ../../../price.without_tax.value) 100))}}
                     {{/if}}
                 {{/if}}
                 
+                {{#if type '===' 'fixed'}}
+                    {{discount.formatted}}
+                {{/if}}
+                
                 {{#if type '===' 'price'}}
-                    {{#if ../../../price.with_tax}}
+                    {{#if ../../price.with_tax}}
                         {{money (subtract ../../../price.with_tax.value discount.value)}}
                     {{else}}
                         {{money (subtract ../../../price.without_tax.value discount.value)}}
+                    {{/if}}
+                {{/if}}
+            </td>
+            {{/each}}
+        </tr>
+        <tr>
+            <th>{{lang 'products.bulk_pricing.saving_text'}}</th>
+            {{#each bulk_discount_rates}}
+            <td>
+                {{#if type '===' 'percent'}}
+                    {{discount.formatted}}
+                {{/if}}
+                
+                {{#if type '===' 'fixed'}}
+                    {{#if ../../price.with_tax.value}}
+                        {{ceil (subtract 100 (multiply 100 (divide discount.value ../../../price.with_tax.value)))}}%
+                    {{else}}
+                        {{ceil (subtract 100 (multiply 100 (divide discount.value ../../../price.without_tax.value)))}}%
+                    {{/if}}
+                {{/if}}
+                
+                {{#if type '===' 'price'}}
+                    {{#if ../../price.with_tax.value}}
+                        {{ceil (subtract 100 (multiply 100 (divide (subtract ../../../price.with_tax.value discount.value) ../../../price.with_tax.value)))}}%
+                    {{else}}
+                        {{ceil (subtract 100 (multiply 100 (divide (subtract ../../../price.without_tax.value discount.value) ../../../price.without_tax.value)))}}%
                     {{/if}}
                 {{/if}}
             </td>

@@ -98,12 +98,11 @@
     font-size: 13px;
     font-weight: 600;
     margin: 0 0 .21429rem 0;
-    padding: 10px 0;
 }
 
 .productView-info-bulkPricing {
     clear: both;
-    padding: 0;
+    padding: 10px 0;
 }
 
 .productView-info-bulkPricing * {
@@ -112,7 +111,7 @@
 
 table.productView-table-bulkPricing {
     font-family: Poppins,Arial,Helvetica,sans-serif;
-    margin-bottom: 10px;
+    width: 100%;
 }
 
 table.productView-table-bulkPricing td,
@@ -124,8 +123,22 @@ table.productView-table-bulkPricing th{
 
 table.productView-table-bulkPricing tbody tr th {
     background-color: #f0f0f0;
+    font-weight: 900!important;
 }
 
 table.productView-table-bulkPricing tbody tr td {
     background-color: #ffffff;
+}
+
+table.productView-table-bulkPricing tr:last-child {
+    color: #22b14c;
+}
+
+table.productView-table-bulkPricing tr:last-child td {
+    font-weight: 600!important;
+}
+
+.productView-info-name.atc-product,
+.productView-info-value.atc-product {
+    display: none;
 }
